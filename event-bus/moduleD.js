@@ -1,4 +1,4 @@
-let a = 3;
-console.log(a);
-console.log("Hello world!")
-setTimeout(() => console.log('exit...'), 100000000);
+function MyFunction() {
+    let txt = prompt("Text:");
+    document.getElementById("hello").textContent = txt;
+}
