@@ -1,29 +1,29 @@
-//LËÌ‡ÏË˜ÂÒÍËÈ ËÏÔÓÚ
+//L–∏–Ω–∞–º–∏—á–µ—Å–∫–∏–π –∏–º–ø–æ—Ä—Ç
 const {
     performance,
 } = require("perf_hooks");
 
 let eventBus = {
     events: {}, //eName:eType
-    listeners: {}, //eType:Ï‡ÒÒË‚ ÙÛÌÍˆËÈ
+    listeners: {}, //eType:–º–∞—Å—Å–∏–≤ —Ñ—É–Ω–∫—Ü–∏–π
 
-    //–Â‡ÍˆËˇ Ì‡ ÒÓ·˚ÚËÂ.¬˚Á˚‚‡ÂÏ ‚ÒÂ ÙÛÌÍˆËË ÔÓ ÚËÔÛ eventType
+    //–†–µ–∞–∫—Ü–∏—è –Ω–∞ —Å–æ–±—ã—Ç–∏–µ. –í—ã–∑—ã–≤–∞–µ–º –≤—Å–µ —Ñ—É–Ω–∫—Ü–∏–∏ –ø–æ —Ç–∏–ø—É eventType
     event: function(eventName,arg){
         /*this.listeners[eventType].forEach((item) => { 
             item(arg)
         });*/
-        let eTypeByEventName = this.events[eventName];
-        for (let elem in this.listeners[eTypeByEventName]) {
-            this.listeners[eTypeByEventName][elem](arg);//¬˚Á˚‚‡ÂÏ ‚ÒÂ ÙÛÌÍˆËË ÔÓ ÚËÔÛ eventType
+        let eTypeByEventName = eventBus.events[eventName];
+        for (let elem in eventBus.listeners[eTypeByEventName]) {
+            eventBus.listeners[eTypeByEventName][elem](arg); // –í—ã–∑—ã–≤–∞–µ–º –≤—Å–µ —Ñ—É–Ω–∫—Ü–∏–∏ –ø–æ —Ç–∏–ø—É eventType
         }
     },
 
-    //Â„ËÒÚ‡ˆËˇ ÒÎÛ¯‡ÚÂÎˇ
-    accept: function(listener,eventType) {//listner ˝ÚÓ ÙÛÌÍˆËˇ ÚÛÚ
-        if (this.listeners[eventType] === undefined) {
-            this.listeners[eventType] = [];//œÛÒÚÓÈ Ï‡ÒÒË‚
+    //—Ä–µ–≥–∏—Å—Ç—Ä–∞—Ü–∏—è —Å–ª—É—à–∞—Ç–µ–ª—è
+    accept: function(listener,eventType) {//listner —ç—Ç–æ —Ñ—É–Ω–∫—Ü–∏—è —Ç—É—Ç
+        if (eventBus.listeners[eventType] === undefined) {
+            eventBus.listeners[eventType] = [];//–ü—É—Å—Ç–æ–π –º–∞—Å—Å–∏–≤
         }
-        this.listeners[eventType].push(listener);//ƒÓ·‡‚ÎˇÂÏ ‚ ÍÓÌÂˆ Ï‡ÒÒË‚‡ ÙÛÌÍˆË˛
+        eventBus.listeners[eventType].push(listener);//–î–æ–±–∞–≤–ª—è–µ–º –≤ –∫–æ–Ω–µ—Ü –º–∞—Å—Å–∏–≤–∞ —Ñ—É–Ω–∫—Ü–∏—é
     },
 
     storage: {
@@ -37,14 +37,18 @@ function moduleD() {
     eventBus.events["LOG"] = "eventType1";
     eventBus.events["INC"] = "eventType2";
     eventBus.events["ADD"] = "eventType3";
-
+    eventBus.events["LoggerCatsCounter"] = "eventType4";
 
 
     eventBus.accept((arg) => { console.log(arg) }, "eventType1")
+
     eventBus.accept(() => {
         console.log(eventBus.storage.catCounter)
     }, "eventType1")
+
+
     eventBus.accept(() => { return eventBus.storage["catCounter"] += 1 }, "eventType2")
+
     eventBus.accept((cat) => {
         if (eventBus.storage["cats"] === undefined)
             eventBus.storage["cats"] = [];
@@ -52,47 +56,49 @@ function moduleD() {
         return eventBus.storage["cats"].length;
     }, "eventType3")
 
-    //¬˚Á˚‚‡˛Ú ÒÓ·˚ÚËˇ LOG Ë INC
-    eventBus.event("INC")
-    eventBus.event("LOG", "Caaaaaaats!))")
+    eventBus.accept(() => {
+        console.log("CountCats: " + eventBus.storage.catCounter) // –í—ã–≤–æ–¥–∏—Ç –≤ –∫–æ—Å–Ω–æ–ª—å –∫–æ–ª–∏—á–µ—Å—Ç–≤–æ –∫–æ—à–µ–∫
+        setTimeout(eventBus.event, 1000, "LOG", "cat counter");
+    }, "eventType4");
+
+    //–í—ã–∑—ã–≤–∞—é—Ç —Å–æ–±—ã—Ç–∏—è LOG –∏ INC
+    eventBus.event("INC");
+    eventBus.event("LOG", "Caaaaaaats!))");
 }
 
 function moduleE() {
     let x;
-    for (let i = 0; i <30000; i++) {
-        //setTimeout ÔÓÁ‚ÓÎˇÂÚ ‚˚Á‚‡Ú¸ ÙÛÌÍˆË˛ Ó‰ËÌ ‡Á ˜ÂÂÁ ÓÔÂ‰ÂÎ∏ÌÌ˚È ËÌÚÂ‚‡Î ‚ÂÏÂÌË.
-        //setTimeout(sayHi, 1000, "œË‚ÂÚ", "ƒÊÓÌ"); ËÏˇ ÙÛÌÍˆËË, Á‡‰ÂÊÍ‡ ÔÂÂ‰ Á‡ÔÛÒÍÓÏ ‚ ÏËÎÎËÒÂÍÛÌ‰‡ı (1000 ÏÒ = 1 Ò), ‡„ÛÏÂÌÚ˚ ‰Îˇ ÙÛÌÍˆËË sayHi
-        //setTimeout ÓÊË‰‡ÂÚ ÒÒ˚ÎÍÛ Ì‡ ÙÛÌÍˆË˛. ¬˚Á˚‚‡Ú¸ ÙÛÌÍˆË˛ ÌÂ Ì‡‰Ó
+    for (let i = 0; i < 100000; i++) {
+        //setTimeout –ø–æ–∑–≤–æ–ª—è–µ—Ç –≤—ã–∑–≤–∞—Ç—å —Ñ—É–Ω–∫—Ü–∏—é –æ–¥–∏–Ω —Ä–∞–∑ —á–µ—Ä–µ–∑ –æ–ø—Ä–µ–¥–µ–ª—ë–Ω–Ω—ã–π –∏–Ω—Ç–µ—Ä–≤–∞–ª –≤—Ä–µ–º–µ–Ω–∏.
+        //setTimeout(sayHi, 1000, "–ü—Ä–∏–≤–µ—Ç", "–î–∂–æ–Ω"); –∏–º—è —Ñ—É–Ω–∫—Ü–∏–∏, –∑–∞–¥–µ—Ä–∂–∫–∞ –ø–µ—Ä–µ–¥ –∑–∞–ø—É—Å–∫–æ–º –≤ –º–∏–ª–ª–∏—Å–µ–∫—É–Ω–¥–∞—Ö (1000 –º—Å = 1 —Å), –∞—Ä–≥—É–º–µ–Ω—Ç—ã –¥–ª—è —Ñ—É–Ω–∫—Ü–∏–∏ sayHi
+        //setTimeout –æ–∂–∏–¥–∞–µ—Ç —Å—Å—ã–ª–∫—É –Ω–∞ —Ñ—É–Ω–∫—Ü–∏—é. –í—ã–∑—ã–≤–∞—Ç—å —Ñ—É–Ω–∫—Ü–∏—é –Ω–µ –Ω–∞–¥–æ
         setTimeout(function () {
             x = { name: "Cat " + i }
             console.log(x);
+            let jjj = "";
+            for (let j = 0; j < 10000; j++)
+                jjj += " ";
             eventBus.event("ADD", x);
+            eventBus.event("INC")
         }, 100);
     }
 }
 
 
+
 moduleD();
 console.log("Storage start: ", eventBus.storage);
+console.log("Events: ", eventBus.events);
+console.log(eventBus);
+setTimeout(eventBus.event, 1000, "LoggerCatsCounter");
+
 
 let time1 = performance.now();
-moduleE(eventBus);
+moduleE();
 let time2 = performance.now();
 console.log("Time :", time2 - time1);
 
 
 setTimeout(() => { console.log("Storage result: ", eventBus.storage); console.log("Time :", time2 - time1) } , 3000);
 
-
-/*function loger() {
-    console.log("I am in log()");
-    cats = eventBus.storage["cats"];
-    for (i = 0; i < cats.length; i++) {
-        let cat = cats[i];
-        (function (cat) {
-            setTimeout(function () {
-                console.log(cat.name);
-            }, 100);
-        }(cat));
-    }
-}*/
+setTimeout(() => console.log("exit"), 100000);
