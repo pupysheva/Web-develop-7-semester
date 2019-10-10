@@ -29,6 +29,7 @@ let eventBus = {
     storage: {
         catCounter: 0,
         cats: [{ name: "Cat  -1))" }],
+        catCountNeed: 3000000,
     },
 }
 
@@ -40,12 +41,7 @@ function moduleD() {
     eventBus.events["LoggerCatsCounter"] = "eventType4";
     eventBus.events["ModuleE"] = "eventType5";
 
-
-    eventBus.accept((arg) => { console.log(arg) }, "eventType1")
-
-    eventBus.accept(() => {
-        console.log(eventBus.storage.catCounter)
-    }, "eventType1")
+    eventBus.accept(console.log, "eventType1")
 
 
     eventBus.accept(() => { return eventBus.storage["catCounter"] += 1 }, "eventType2")
@@ -59,32 +55,31 @@ function moduleD() {
 
     eventBus.accept(() => {
         setTimeout(eventBus.event, 1000, "LOG", "CountCats: " + eventBus.storage.catCounter);
-        setTimeout(eventBus.event, 1000, "LoggerCatsCounter");
+        if (eventBus.storage.catCounter < eventBus.storage.catCountNeed)
+            setTimeout(eventBus.event, 1000, "LoggerCatsCounter");
     }, "eventType4");
 
     //Вызывают события LOG и INC
     eventBus.event("INC");
-    eventBus.event("LOG", "Caaaaaaats!))");
+    eventBus.event("LOG", "Caaaaaaats!)) " + eventBus.storage.catCounter);
 }
 
 eventBus.accept(moduleE, "eventType5")
 function moduleE() {
     let x
-    for (let i = 1000; i >= 0 && eventBus.storage.catCounter < 100000; i--) {
+    for (let i = 10000; i >= 0 && eventBus.storage.catCounter < eventBus.storage.catCountNeed; i--) {
         x = { name: "Cat " + i }
         //console.log(x);
         eventBus.event("ADD", x);
         eventBus.event("INC")
     }
-    if (eventBus.storage.catCounter < 100000)
-        setTimeout(eventBus.event, 1000, "ModuleE");
+    if (eventBus.storage.catCounter < eventBus.storage.catCountNeed)
+        setTimeout(eventBus.event, 5, "ModuleE");
 }
 
 
 
 moduleD();
-console.log("Storage start: ", eventBus.storage);
-console.log("Events: ", eventBus.events);
 console.log(eventBus);
 setTimeout(eventBus.event, 1000, "LoggerCatsCounter");
 
