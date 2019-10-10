@@ -38,6 +38,7 @@ function moduleD() {
     eventBus.events["INC"] = "eventType2";
     eventBus.events["ADD"] = "eventType3";
     eventBus.events["LoggerCatsCounter"] = "eventType4";
+    eventBus.events["ModuleE"] = "eventType5";
 
 
     eventBus.accept((arg) => { console.log(arg) }, "eventType1")
@@ -57,8 +58,8 @@ function moduleD() {
     }, "eventType3")
 
     eventBus.accept(() => {
-        console.log("CountCats: " + eventBus.storage.catCounter) // Выводит в косноль количество кошек
-        setTimeout(eventBus.event, 1000, "LOG", "cat counter");
+        setTimeout(eventBus.event, 1000, "LOG", "CountCats: " + eventBus.storage.catCounter);
+        setTimeout(eventBus.event, 1000, "LoggerCatsCounter");
     }, "eventType4");
 
     //Вызывают события LOG и INC
@@ -66,22 +67,17 @@ function moduleD() {
     eventBus.event("LOG", "Caaaaaaats!))");
 }
 
+eventBus.accept(moduleE, "eventType5")
 function moduleE() {
-    let x;
-    for (let i = 0; i < 100000; i++) {
-        //setTimeout позволяет вызвать функцию один раз через определённый интервал времени.
-        //setTimeout(sayHi, 1000, "Привет", "Джон"); имя функции, задержка перед запуском в миллисекундах (1000 мс = 1 с), аргументы для функции sayHi
-        //setTimeout ожидает ссылку на функцию. Вызывать функцию не надо
-        setTimeout(function () {
-            x = { name: "Cat " + i }
-            console.log(x);
-            let jjj = "";
-            for (let j = 0; j < 10000; j++)
-                jjj += " ";
-            eventBus.event("ADD", x);
-            eventBus.event("INC")
-        }, 100);
+    let x
+    for (let i = 1000; i >= 0 && eventBus.storage.catCounter < 100000; i--) {
+        x = { name: "Cat " + i }
+        //console.log(x);
+        eventBus.event("ADD", x);
+        eventBus.event("INC")
     }
+    if (eventBus.storage.catCounter < 100000)
+        setTimeout(eventBus.event, 1000, "ModuleE");
 }
 
 
@@ -99,6 +95,6 @@ let time2 = performance.now();
 console.log("Time :", time2 - time1);
 
 
-setTimeout(() => { console.log("Storage result: ", eventBus.storage); console.log("Time :", time2 - time1) } , 3000);
+//setTimeout(() => { console.log("Storage result: ", eventBus.storage); console.log("Time :", time2 - time1) } , 3000);
 
 setTimeout(() => console.log("exit"), 100000);
