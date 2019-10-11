@@ -1,17 +1,14 @@
-//Lинамический импорт
+// Динамический импорт
 const {
     performance,
 } = require("perf_hooks");
 
 let eventBus = {
-    events: {}, //eName:eType
-    listeners: {}, //eType:массив функций
+    events: {}, // eName:eType
+    listeners: {}, // eType:массив функций
 
-    //Реакция на событие. Вызываем все функции по типу eventType
-    event: function(eventName,arg){
-        /*this.listeners[eventType].forEach((item) => { 
-            item(arg)
-        });*/
+    // Реакция на событие. Вызываем все функции по типу eventType
+    event: function (eventName, arg) {
         let eTypeByEventName = eventBus.events[eventName];
         for (let elem in eventBus.listeners[eTypeByEventName]) {
             eventBus.listeners[eTypeByEventName][elem](arg); // Вызываем все функции по типу eventType
@@ -19,11 +16,11 @@ let eventBus = {
     },
 
     //регистрация слушателя
-    accept: function(listener,eventType) {//listner это функция тут
+    accept: function (listener, eventType) {
         if (eventBus.listeners[eventType] === undefined) {
-            eventBus.listeners[eventType] = [];//Пустой массив
+            eventBus.listeners[eventType] = []; // Пустой массив
         }
-        eventBus.listeners[eventType].push(listener);//Добавляем в конец массива функцию
+        eventBus.listeners[eventType].push(listener); // Добавляем в конец массива функцию
     },
 
     storage: {
@@ -59,7 +56,7 @@ function moduleD() {
             setTimeout(eventBus.event, 1000, "LoggerCatsCounter");
     }, "eventType4");
 
-    //Вызывают события LOG и INC
+    // Вызывают события LOG и INC
     eventBus.event("INC");
     eventBus.event("LOG", "Caaaaaaats!)) " + eventBus.storage.catCounter);
 }
@@ -69,7 +66,6 @@ function moduleE() {
     let x
     for (let i = 10000; i >= 0 && eventBus.storage.catCounter < eventBus.storage.catCountNeed; i--) {
         x = { name: "Cat " + i }
-        //console.log(x);
         eventBus.event("ADD", x);
         eventBus.event("INC")
     }
@@ -88,8 +84,5 @@ let time1 = performance.now();
 moduleE();
 let time2 = performance.now();
 console.log("Time :", time2 - time1);
-
-
-//setTimeout(() => { console.log("Storage result: ", eventBus.storage); console.log("Time :", time2 - time1) } , 3000);
 
 setTimeout(() => console.log("exit"), 100000);
