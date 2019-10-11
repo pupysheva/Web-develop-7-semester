@@ -4,23 +4,21 @@ const {
 } = require("perf_hooks");
 
 let eventBus = {
-    events: {}, // eName:eType
-    listeners: {}, // eType:массив функций
+    listeners: {}, // eName:массив функций
 
     // Реакция на событие. Вызываем все функции по типу eventType
     event: function (eventName, arg) {
-        let eTypeByEventName = eventBus.events[eventName];
-        for (let elem in eventBus.listeners[eTypeByEventName]) {
-            eventBus.listeners[eTypeByEventName][elem](arg); // Вызываем все функции по типу eventType
+        for (let elem in eventBus.listeners[eventName]) {
+            eventBus.listeners[eventName][elem](arg); // Вызываем все функции по типу eventType
         }
     },
 
     //регистрация слушателя
-    accept: function (listener, eventType) {
-        if (eventBus.listeners[eventType] === undefined) {
-            eventBus.listeners[eventType] = []; // Пустой массив
+    accept: function (listener, eventName) {
+        if (eventBus.listeners[eventName] === undefined) {
+            eventBus.listeners[eventName] = []; // Пустой массив
         }
-        eventBus.listeners[eventType].push(listener); // Добавляем в конец массива функцию
+        eventBus.listeners[eventName].push(listener); // Добавляем в конец массива функцию
     },
 
     storage: {
@@ -32,36 +30,31 @@ let eventBus = {
 
 
 function moduleD() {
-    eventBus.events["LOG"] = "eventType1";
-    eventBus.events["INC"] = "eventType2";
-    eventBus.events["ADD"] = "eventType3";
-    eventBus.events["LoggerCatsCounter"] = "eventType4";
-    eventBus.events["ModuleE"] = "eventType5";
 
-    eventBus.accept(console.log, "eventType1")
+    eventBus.accept(console.log, "LOG")
 
 
-    eventBus.accept(() => { return eventBus.storage["catCounter"] += 1 }, "eventType2")
+    eventBus.accept(() => { return eventBus.storage["catCounter"] += 1 }, "INC")
 
     eventBus.accept((cat) => {
         if (eventBus.storage["cats"] === undefined)
             eventBus.storage["cats"] = [];
         eventBus.storage["cats"].push(cat);
         return eventBus.storage["cats"].length;
-    }, "eventType3")
+    }, "ADD")
 
     eventBus.accept(() => {
         setTimeout(eventBus.event, 1000, "LOG", "CountCats: " + eventBus.storage.catCounter);
         if (eventBus.storage.catCounter < eventBus.storage.catCountNeed)
             setTimeout(eventBus.event, 1000, "LoggerCatsCounter");
-    }, "eventType4");
+    }, "LoggerCatsCounter");
 
     // Вызывают события LOG и INC
     eventBus.event("INC");
     eventBus.event("LOG", "Caaaaaaats!)) " + eventBus.storage.catCounter);
 }
 
-eventBus.accept(moduleE, "eventType5")
+eventBus.accept(moduleE, "ModuleE")
 function moduleE() {
     let x
     for (let i = 10000; i >= 0 && eventBus.storage.catCounter < eventBus.storage.catCountNeed; i--) {
