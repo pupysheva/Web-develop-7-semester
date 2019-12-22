@@ -4,91 +4,96 @@ const {
 } = require("perf_hooks");
 
 let eventBus = {
-    events: {}, //eName:eType
-    listeners: {}, //eType:массив функций
+  events: {}, //eName:eType
+  listeners: {}, //eType:массив функций
 
-    //Реакция на событие. Вызываем все функции по типу eventType
-    event: function(eventName,arg){
-        /*this.listeners[eventType].forEach((item) => { 
+  //Реакция на событие. Вызываем все функции по типу eventType
+  event: function(eventName, arg) {
+    /*this.listeners[eventType].forEach((item) => { 
             item(arg)
         });*/
-        let eTypeByEventName = eventBus.events[eventName];
-        for (let elem in eventBus.listeners[eTypeByEventName]) {
-            eventBus.listeners[eTypeByEventName][elem](arg); // Вызываем все функции по типу eventType
-        }
-    },
+    let eTypeByEventName = eventBus.events[eventName];
+    for (let elem in eventBus.listeners[eTypeByEventName]) {
+      eventBus.listeners[eTypeByEventName][elem](arg); // Вызываем все функции по типу eventType
+    }
+  },
 
-    //регистрация слушателя
-    accept: function(listener,eventType) {//listner это функция тут
-        if (eventBus.listeners[eventType] === undefined) {
-            eventBus.listeners[eventType] = [];//Пустой массив
-        }
-        eventBus.listeners[eventType].push(listener);//Добавляем в конец массива функцию
-    },
+  //регистрация слушателя
+  accept: function(listener, eventType) {
+    //listner это функция тут
+    if (eventBus.listeners[eventType] === undefined) {
+      eventBus.listeners[eventType] = []; //Пустой массив
+    }
+    eventBus.listeners[eventType].push(listener); //Добавляем в конец массива функцию
+  },
 
-    storage: {
-        catCounter: 0,
-        cats: [{ name: "Cat  -1))" }],
-        catCountNeed: 3000000,
-    },
-}
-
+  storage: {
+    catCounter: 0,
+    cats: [{ name: "Cat  -1))" }],
+    catCountNeed: 3000000
+  }
+};
 
 function moduleD() {
-    eventBus.events["LOG"] = "eventType1";
-    eventBus.events["INC"] = "eventType2";
-    eventBus.events["ADD"] = "eventType3";
-    eventBus.events["LoggerCatsCounter"] = "eventType4";
-    eventBus.events["ModuleE"] = "eventType5";
+  eventBus.events["LOG"] = "eventType1";
+  eventBus.events["INC"] = "eventType2";
+  eventBus.events["ADD"] = "eventType3";
+  eventBus.events["LoggerCatsCounter"] = "eventType4";
+  eventBus.events["ModuleE"] = "eventType5";
 
-    eventBus.accept(console.log, "eventType1")
+  eventBus.accept(console.log, "eventType1");
 
+  eventBus.accept(() => {
+    return (eventBus.storage["catCounter"] += 1);
+  }, "eventType2");
 
-    eventBus.accept(() => { return eventBus.storage["catCounter"] += 1 }, "eventType2")
+  eventBus.accept(cat => {
+    if (eventBus.storage["cats"] === undefined) eventBus.storage["cats"] = [];
+    eventBus.storage["cats"].push(cat);
+    return eventBus.storage["cats"].length;
+  }, "eventType3");
 
-    eventBus.accept((cat) => {
-        if (eventBus.storage["cats"] === undefined)
-            eventBus.storage["cats"] = [];
-        eventBus.storage["cats"].push(cat);
-        return eventBus.storage["cats"].length;
-    }, "eventType3")
-
-    eventBus.accept(() => {
-        setTimeout(eventBus.event, 1000, "LOG", "CountCats: " + eventBus.storage.catCounter);
-        if (eventBus.storage.catCounter < eventBus.storage.catCountNeed)
-            setTimeout(eventBus.event, 1000, "LoggerCatsCounter");
-    }, "eventType4");
-
-    //Вызывают события LOG и INC
-    eventBus.event("INC");
-    eventBus.event("LOG", "Caaaaaaats!)) " + eventBus.storage.catCounter);
-}
-
-eventBus.accept(moduleE, "eventType5")
-function moduleE() {
-    let x
-    for (let i = 10000; i >= 0 && eventBus.storage.catCounter < eventBus.storage.catCountNeed; i--) {
-        x = { name: "Cat " + i }
-        //console.log(x);
-        eventBus.event("ADD", x);
-        eventBus.event("INC")
-    }
+  eventBus.accept(() => {
+    setTimeout(
+      eventBus.event,
+      1000,
+      "LOG",
+      "CountCats: " + eventBus.storage.catCounter
+    );
     if (eventBus.storage.catCounter < eventBus.storage.catCountNeed)
-        setTimeout(eventBus.event, 5, "ModuleE");
+      setTimeout(eventBus.event, 1000, "LoggerCatsCounter");
+  }, "eventType4");
+
+  //Вызывают события LOG и INC
+  eventBus.event("INC");
+  eventBus.event("LOG", "Caaaaaaats!)) " + eventBus.storage.catCounter);
 }
 
-
+eventBus.accept(moduleE, "eventType5");
+function moduleE() {
+  let x;
+  for (
+    let i = 10000;
+    i >= 0 && eventBus.storage.catCounter < eventBus.storage.catCountNeed;
+    i--
+  ) {
+    x = { name: "Cat " + i };
+    //console.log(x);
+    eventBus.event("ADD", x);
+    eventBus.event("INC");
+  }
+  if (eventBus.storage.catCounter < eventBus.storage.catCountNeed)
+    setTimeout(eventBus.event, 5, "ModuleE");
+}
 
 moduleD();
 console.log(eventBus);
 setTimeout(eventBus.event, 1000, "LoggerCatsCounter");
 
-
 let time1 = performance.now();
 moduleE();
 let time2 = performance.now();
 console.log("Time :", time2 - time1);
-
 
 //setTimeout(() => { console.log("Storage result: ", eventBus.storage); console.log("Time :", time2 - time1) } , 3000);
 

@@ -1,0 +1,8 @@
+ru/mirea/ItemService/ReqBody.class
+ru/mirea/ItemService/Item.class
+ru/mirea/ItemService/ItemDB.class
+ru/mirea/ItemService/BackJDBCTemplate.class
+ru/mirea/ItemService/ApplicationBackend.class
+ru/mirea/ItemService/Resp.class
+ru/mirea/ItemService/RequestFilter.class
+ru/mirea/ItemService/ItemController.class

@@ -1,6 +1,6 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
 
 function App() {
   return (
@@ -8,7 +8,8 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Лаба 2 Сидоренко, Пупышева <br/> <img src="https://sun9-67.userapi.com/c849020/v849020136/140f66/84VXJ_8unpc.jpg"/>
+          Лаба 2 Сидоренко, Пупышева <br />{" "}
+          <img src="https://sun9-67.userapi.com/c849020/v849020136/140f66/84VXJ_8unpc.jpg" />
         </p>
         <a
           className="App-link"
